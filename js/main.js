@@ -100,10 +100,20 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ── Scroll-reveal ──────────────────────────────────────── */
   const revealEls = document.querySelectorAll('.reveal');
   if (revealEls.length) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    revealEls.forEach(el => observer.observe(el));
+    const revealEl = el => el.classList.add('visible');
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { revealEl(e.target); observer.unobserve(e.target); } });
+      }, { threshold: 0, rootMargin: '0px 0px -30px 0px' });
+      revealEls.forEach(el => observer.observe(el));
+    }
+
+    // Hard fallback: if nothing revealed after 400 ms, show everything.
+    // Covers browsers/iframes where IntersectionObserver fires inconsistently.
+    setTimeout(() => {
+      revealEls.forEach(el => { if (!el.classList.contains('visible')) revealEl(el); });
+    }, 400);
   }
 
   /* ── Category filter pills (articles page) ──────────────── */
