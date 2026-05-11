@@ -799,7 +799,10 @@ html, body { overflow-x: hidden; max-width: 100%; }
   padding: 2rem 0 4rem;
   align-items: start;
 }
-.article-main {}
+/* min-width: 0 prevents grid items from expanding their track beyond the container
+   when real images are present (fixes overflow on real-photo article pages) */
+.article-main { min-width: 0; }
+.article-sidebar { min-width: 0; }
 .article-header { margin-bottom: 2rem; }
 .article-header .badge { margin-bottom: .75rem; }
 .article-header h1 { margin-bottom: 1rem; line-height: 1.2; }
@@ -827,7 +830,9 @@ html, body { overflow-x: hidden; max-width: 100%; }
   overflow: hidden;
   margin-bottom: 2.25rem;
 }
-.article-hero-img img { width: 100%; height: 400px; object-fit: cover; }
+.article-hero-img img { width: 100%; max-width: 100%; height: 400px; object-fit: cover; }
+/* Constrain any inline-styled images inside article body */
+.article-body img { max-width: 100%; height: auto; display: block; }
 
 /* Article body typography */
 .article-body { color: var(--text-secondary); line-height: 1.85; }
@@ -1102,6 +1107,15 @@ html, body { overflow-x: hidden; max-width: 100%; }
 
   /* Article page */
   .article-callout { flex-direction: column; gap: .5rem; }
+  /* Collapse any inline 2-col grids inside article body (sports grid, store info) */
+  .article-body [style*="grid-template-columns:1fr 1fr"],
+  .article-body [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  /* Article page layout single column */
+  .article-page-layout { grid-template-columns: 1fr !important; gap: 2rem; }
+  /* Article hero image height reduced on mobile */
+  .article-hero-img img { height: 240px; }
 
   /* About / Contact */
   .about-content-grid { grid-template-columns: 1fr; }
@@ -1117,10 +1131,11 @@ html, body { overflow-x: hidden; max-width: 100%; }
   .newsletter-band-form input { min-width: 0; width: 100%; }
   .newsletter-band-form button { width: 100%; }
 
-  /* Footer */
+  /* Footer — add right padding so back-to-top button doesn't clip text */
   .related-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; }
   .footer-inner { flex-direction: column; gap: 1.5rem; }
+  .footer-bottom { padding-right: 60px; }
 
   /* Category pills — ensure scroll doesn't bleed */
   .categories-strip { overflow: hidden; }
